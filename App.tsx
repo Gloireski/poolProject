@@ -8,7 +8,6 @@ export default function App() {
         Let's start our pool project!
       </Text>
       <Text className="text-lg font-semibold text-gray-700"> Key features</Text>
-      <Text style={{ color: "gray", fontSize: 14, opacity: 0.8 }}> - Real-time chat</Text>
       <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Camera Page </Text>
       <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Map Page</Text>
       <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Calendar Page</Text>
