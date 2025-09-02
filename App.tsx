@@ -1,20 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import "./global.css"
+import { Text, View, StyleSheet } from "react-native";
+ 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View className="flex-1 items-center justify-center bg-white">
+      <Text className="text-xl font-bold text-blue-500">
+        Let's start our pool project!
+      </Text>
+      <Text className="text-lg font-semibold text-gray-700"> Key features</Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.8 }}> - Real-time chat</Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Camera Page </Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Map Page</Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Calendar Page</Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Pictures Page</Text>
+      <Text style={{ color: "gray", fontSize: 14, opacity: 0.7 }}> - Profil and Auth Page</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
