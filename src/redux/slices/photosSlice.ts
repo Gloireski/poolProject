@@ -16,19 +16,19 @@ const initialState: PhotosState = {
   list: [
     {
       id: "1",
-      uri: "https://placekitten.com/300/300",
+      uri: "https://picsum.photos/300?random=1",
       date: "2025-09-01",
       location: { latitude: 48.8566, longitude: 2.3522 }, // Paris
     },
     {
       id: "2",
-      uri: "https://placekitten.com/400/400",
+      uri: "https://picsum.photos/400?random=2",
       date: "2025-09-02",
       location: { latitude: 40.7128, longitude: -74.0060 }, // New York
     },
     {
       id: "3",
-      uri: "https://placekitten.com/500/500",
+      uri: "https://picsum.photos/500?random=3",
       date: "2025-09-02",
       location: { latitude: 35.6895, longitude: 139.6917 }, // Tokyo
     },

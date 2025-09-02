@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Modal, Text, TouchableOpacity, Image, Pressable, StyleSheet } from "react-native";
+import { View, Modal, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useSelector } from "react-redux";
 import  { RootState } from "../redux/store";
@@ -32,8 +32,8 @@ export default function MapScreen() {
                     >
                         <View style={{ width: 40, height: 40, borderRadius: 20, overflow: "hidden", borderWidth: 2, borderColor: "white" }}>
                         <Image
-                            source={require("../../assets/car.png")}
-                            style={{ width: 40, height: 40 }}
+                            source={{ uri: photo.uri }}
+                            style={{ width: 80, height: 80 }}
                         />
                         </View>
                     </Marker>
@@ -46,7 +46,7 @@ export default function MapScreen() {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         {selectedPhoto?.uri ? (
-                            <Image source={{ uri: require("../../assets/car.png") }} style={styles.image} />
+                            <Image source={{ uri: selectedPhoto.uri }} style={styles.image} />
                         ) : (
                             <Text>No image available</Text>
                         )}
