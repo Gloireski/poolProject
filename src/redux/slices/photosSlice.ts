@@ -1,17 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export type Photo = {
-  id: string;
-  uri: string;
-  date: string;
-  location?: { latitude: number; longitude: number };
-};
+import { Photo } from "../../types";
 
 type PhotosState = {
   list: Photo[];
 };
 
-// ✅ Mock data (photos fictives avec images en ligne)
+// Mock data (photos fictives avec images en ligne)
 const initialState: PhotosState = {
   list: [
     {
@@ -19,18 +13,21 @@ const initialState: PhotosState = {
       uri: "https://picsum.photos/300?random=1",
       date: "2025-09-01",
       location: { latitude: 48.8566, longitude: 2.3522 }, // Paris
+      description: "Paris"
     },
     {
       id: "2",
       uri: "https://picsum.photos/400?random=2",
       date: "2025-09-02",
       location: { latitude: 40.7128, longitude: -74.0060 }, // New York
+      description: "New York"
     },
     {
       id: "3",
       uri: "https://picsum.photos/500?random=3",
       date: "2025-09-02",
       location: { latitude: 35.6895, longitude: 139.6917 }, // Tokyo
+      description: "Tokyo"
     },
   ],
 };
