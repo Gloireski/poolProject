@@ -1,48 +1,39 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useDispatch, useSelector } from 'react-redux';
-import { hydrateSession } from '../store/slices/authSlice';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import CalendarScreen from '../screens/CalendarScreen';
-import GalleryScreen from '../screens/GalleryScreen';
-import ProfileScreen from '../screens/ProfileScreen';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MapScreen from "../screens/MapScreen";
+import CameraScreen from "../screens/CameraScreen";
+import CalendarScreen from "../screens/CalendarScreen";
+import PhotosScreen from "../screens/PhotosScreen";
+import ProfileScreen from "../screens/profileScreen";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const Stack = createNativeStackNavigator();
-const Tabs = createBottomTabNavigator();
-
-function MainTabs() {
-  return (
-    <Tabs.Navigator>
-      <Tabs.Screen name="Calendar" component={CalendarScreen} />
-      <Tabs.Screen name="Gallery" component={GalleryScreen} />
-      <Tabs.Screen name="Profile" component={ProfileScreen} />
-    </Tabs.Navigator>
-  );
-}
+const Tab = createBottomTabNavigator();
 
 export default function AppNavigator() {
-  const dispatch = useDispatch();
-  const { token, loading } = useSelector((s: any) => s.auth);
-
-  useEffect(() => { dispatch<any>(hydrateSession()); }, [dispatch]);
-
-  if (loading) return null;
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!token ? (
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          </>
-        ) : (
-          <Stack.Screen name="Main" component={MainTabs} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerStyle: { backgroundColor: "#0F4C81" },
+        headerTintColor: "#ffffff",
+        tabBarActiveTintColor: "#14B8A6",
+        tabBarStyle: { backgroundColor: "#002F47" },
+        headerShown: false,
+        tabBarIcon: ({ color, size }: { color: string; size: number }) => {
+          const map: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
+            Carte: "map",
+            Camera: "camera",
+            Calendrier: "calendar",
+            Photos: "image-multiple",
+            Profile: "account"
+          };
+          return <MaterialCommunityIcons name={map[route.name]} color={color} size={size} />;
+        }
+      })}
+    >
+      <Tab.Screen name="Camera" component={CameraScreen}/>
+      <Tab.Screen name="Carte" component={MapScreen} />
+      <Tab.Screen name="Calendrier" component={CalendarScreen}/>
+      <Tab.Screen name="Photos" component={PhotosScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }
