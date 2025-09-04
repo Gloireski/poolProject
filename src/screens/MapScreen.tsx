@@ -5,13 +5,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Modal } from "react-native";
+import { getItemAsync } from "expo-secure-store";
 
 export default function MapScreen() {
     const photos = useSelector((state: RootState) => state.photos.photos || []);
     const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
     const mapRef = useRef<MapView | null>(null);
 
-    console.log("Photos from state:", photos);
+    const formatter = new Intl.DateTimeFormat("fr-FR", {
+        month: "long",
+        year: "numeric",
+    });
 
     const photoPoints = useMemo(() => {
         return photos
@@ -90,8 +94,8 @@ export default function MapScreen() {
                         onPress={() => setSelectedPhoto(p)}
                     >
                         <Callout>
-                            <Text>
-                                {new Date(p.capturedAt || p.createdAt || p.date || Date.now()).toLocaleString()}
+                            <Text style={{ flex: 1, justifyContent: 'center', alignItems: 'center', fontWeight: "bold", fontSize: 14 }}>
+                                {formatter.format(new Date(p.capturedAt || p.createdAt || p.date || Date.now()))}
                             </Text>
                         </Callout>
                     </Marker>
@@ -121,11 +125,11 @@ export default function MapScreen() {
                         )}
                         <Text style={styles.date}>
                             <FontAwesome name="calendar" size={20} color="#e11d48" />{' '}
-                            {new Date(selectedPhoto?.capturedAt || selectedPhoto?.createdAt || selectedPhoto?.date || Date.now()).toLocaleString()}
+                            {formatter.format(new Date(selectedPhoto?.capturedAt || selectedPhoto?.createdAt || selectedPhoto?.date || Date.now()))}
                         </Text>
-                        {selectedPhoto?.description ? (
+                        {selectedPhoto?.notes ? (
                             <Text style={{ marginBottom: 10 }}>
-                                <FontAwesome name="info-circle" size={20} color="#e11d48" /> {selectedPhoto.description}
+                                <FontAwesome name="info-circle" size={20} color="#e11d48" /> {selectedPhoto.notes}
                             </Text>
                         ) : null}
                         <Pressable style={styles.closeButton} onPress={() => setSelectedPhoto(null)}>
