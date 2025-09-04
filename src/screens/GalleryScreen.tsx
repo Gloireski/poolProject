@@ -19,7 +19,7 @@ import {
   refreshPhotos,
   setDateFilter,
 } from "../store/slices/photosSlice";
-import { Photo } from "../services/photosService";
+import { Photo } from "../types/photosTypes";
 import { Platform } from "react-native";
 
 // Build the correct base URL for images
