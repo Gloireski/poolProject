@@ -6,6 +6,7 @@ import PhotosScreen from "../screens/GalleryScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import LoginScreen from "../screens/LoginScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AuthStack from "./AuthStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,7 +38,7 @@ export default function AppNavigator({ token}: { token: string | null }) {
       <Tab.Screen name="Photos" component={PhotosScreen} />
       {token && <Tab.Screen name="Profile" component={ProfileScreen} />}
       {/* ajouter un onglet auth si user n'est pas connecté */}
-      {!token && <Tab.Screen name="Auth" component={LoginScreen} />}
+      {!token && <Tab.Screen name="Auth" component={AuthStack} options={{ title: "Connexion" }} />}
     </Tab.Navigator>
   );
 }
