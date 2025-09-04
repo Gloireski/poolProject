@@ -1,15 +1,20 @@
 import React, { useMemo, useRef, useState } from "react";
-import { View, Text, Pressable, Image, StyleSheet, Platform } from "react-native";
+import { 
+    View, Text, Pressable, Image, StyleSheet, Platform
+
+} from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE, Region, Callout } from "react-native-maps";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Modal } from "react-native";
 import { getItemAsync } from "expo-secure-store";
+import { Photo } from "../types/photosTypes";
+import PhotoModal from "../components/PhotoModal";
 
 export default function MapScreen() {
     const photos = useSelector((state: RootState) => state.photos.photos || []);
-    const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
+    const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
     const mapRef = useRef<MapView | null>(null);
 
     const formatter = new Intl.DateTimeFormat("fr-FR", {
@@ -115,29 +120,49 @@ export default function MapScreen() {
                 </Pressable>
             </View>
 
-            <Modal visible={!!selectedPhoto} transparent animationType="fade">
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        {selectedPhoto?.uri ? (
-                            <Image source={{ uri: selectedPhoto.uri }} style={styles.image} />
-                        ) : (
-                            <Text>No image available</Text>
+            <Modal
+                visible={!!selectedPhoto}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setSelectedPhoto(null)} // Android back
+                >
+                {/* Overlay qui capte le clic pour fermer */}
+                <Pressable style={styles.modalContainer} onPress={() => setSelectedPhoto(null)}>
+                    {/* Contenu qui bloque la propagation du clic */}
+                    <Pressable style={styles.modalContent} onPress={() => {}}>
+                    {selectedPhoto?.uri ? (
+                        <Image source={{ uri: selectedPhoto.uri }} style={styles.image} />
+                    ) : (
+                        <Text>No image available</Text>
+                    )}
+
+                    <Text style={styles.date}>
+                        <FontAwesome name="calendar" size={20} color="#e11d48" />{" "}
+                        {formatter.format(
+                        new Date(
+                            selectedPhoto?.capturedAt ||
+                            Date.now()
+                        )
                         )}
-                        <Text style={styles.date}>
-                            <FontAwesome name="calendar" size={20} color="#e11d48" />{' '}
-                            {formatter.format(new Date(selectedPhoto?.capturedAt || selectedPhoto?.createdAt || selectedPhoto?.date || Date.now()))}
+                    </Text>
+
+                    {selectedPhoto?.notes ? (
+                        <Text style={{ marginBottom: 10 }}>
+                        <FontAwesome name="info-circle" size={20} color="#e11d48" />{" "}
+                        {selectedPhoto.notes}
                         </Text>
-                        {selectedPhoto?.notes ? (
-                            <Text style={{ marginBottom: 10 }}>
-                                <FontAwesome name="info-circle" size={20} color="#e11d48" /> {selectedPhoto.notes}
-                            </Text>
-                        ) : null}
-                        <Pressable style={styles.closeButton} onPress={() => setSelectedPhoto(null)}>
-                            <Text style={{ color: "white" }}>Close</Text>
-                        </Pressable>
-                    </View>
-                </View>
+                    ) : null}
+
+                    <Pressable
+                        style={styles.closeButton}
+                        onPress={() => setSelectedPhoto(null)}
+                    >
+                        <Text style={{ color: "white" }}>Fermer</Text>
+                    </Pressable>
+                    </Pressable>
+                </Pressable>
             </Modal>
+
         </View>
     );
 }
@@ -178,7 +203,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 12,
     alignItems: "center",
-    width: 300,
+    // width: 300,
   },
   image: {
     width: 250,
