@@ -25,6 +25,15 @@ module.exports = ({ config }) => {
         ...((config.ios && config.ios.config) || {}),
         googleMapsApiKey: iosKey,
       },
+      infoPlist: {
+        ...((config.ios && config.ios.infoPlist) || {}),
+        NSCameraUsageDescription:
+          'This app uses the camera to capture photos for your travel journal.',
+        NSPhotoLibraryAddUsageDescription:
+          'This app saves captured photos to your library and uploads them to your gallery.',
+        NSPhotoLibraryUsageDescription:
+          'This app needs access to your photo library to pick and save photos.',
+      },
     },
   };
 };

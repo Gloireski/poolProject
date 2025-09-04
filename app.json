@@ -13,7 +13,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to capture photos for your travel journal.",
+        "NSPhotoLibraryAddUsageDescription": "This app saves captured photos to your library and uploads them to your gallery.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to pick and save photos.",
+        "NSLocationWhenInUseUsageDescription": "Location is used to tag photos with where they were taken and show them on the map.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Location is used to tag photos with where they were taken and show them on the map."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyAtl1PQHVvp15nJCw46sQ6TD5IVjc9so8I"
+      },
+      "bundleIdentifier": "com.anonymous.poolProject"
     },
     "android": {
       "adaptiveIcon": {
