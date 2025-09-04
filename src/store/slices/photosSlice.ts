@@ -15,30 +15,30 @@ interface PhotosState {
 const initialState: PhotosState = {
   photos: [
     // mock de donnnees photos
-     {
-      _id: "1",
-      uri: "https://picsum.photos/300?random=1",
-      capturedAt: "2025-09-01",
-      latitude: 48.8566,
-      longitude: 2.3522,
-      notes: "Paris"
-    },
-    {
-      _id: "2",
-      uri: "https://picsum.photos/400?random=2",
-      capturedAt: "2025-09-02",
-      latitude: 40.7128,
-      longitude: -74.0060,
-      notes: "New York"
-    },
-    {
-      _id: "3",
-      uri: "https://picsum.photos/500?random=3",
-      capturedAt: "2025-09-02",
-      latitude: 35.6895,
-      longitude: 139.6917,
-      notes: "Tokyo"
-    },
+    //  {
+    //   _id: "1",
+    //   uri: "https://picsum.photos/300?random=1",
+    //   capturedAt: "2025-09-01",
+    //   latitude: 48.8566,
+    //   longitude: 2.3522,
+    //   notes: "Paris"
+    // },
+    // {
+    //   _id: "2",
+    //   uri: "https://picsum.photos/400?random=2",
+    //   capturedAt: "2025-09-02",
+    //   latitude: 40.7128,
+    //   longitude: -74.0060,
+    //   notes: "New York"
+    // },
+    // {
+    //   _id: "3",
+    //   uri: "https://picsum.photos/500?random=3",
+    //   capturedAt: "2025-09-02",
+    //   latitude: 35.6895,
+    //   longitude: 139.6917,
+    //   notes: "Tokyo"
+    // },
   ],
   loading: false,
   error: null,

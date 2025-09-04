@@ -66,7 +66,9 @@ export default function CameraScreen() {
       form.append('address', '');
       form.append('notes', '');
 
-      await api.post('/upload/photo', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      console.log('[camera] uploading photo...', form);
+
+      await api.post('/photos', form, { headers: { 'Content-Type': 'multipart/form-data' } });
 
       setCapturedUri(null);
       Alert.alert('Uploaded', 'Photo added to your gallery.');

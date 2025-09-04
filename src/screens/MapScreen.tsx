@@ -17,11 +17,18 @@ export default function MapScreen() {
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
     const mapRef = useRef<MapView | null>(null);
 
+    console.log("photos", photos);
+
     const formatter = new Intl.DateTimeFormat("fr-FR", {
         month: "long",
         year: "numeric",
     });
 
+    const normalizeUri = (uri: string) => {
+        if (!uri) return "";
+            if (uri.startsWith("http")) return uri;
+            return `http://localhost:3001${uri}`;
+    };
     const photoPoints = useMemo(() => {
         return photos
             .map((p: any) => {
@@ -131,7 +138,7 @@ export default function MapScreen() {
                     {/* Contenu qui bloque la propagation du clic */}
                     <Pressable style={styles.modalContent} onPress={() => {}}>
                     {selectedPhoto?.uri ? (
-                        <Image source={{ uri: selectedPhoto.uri }} style={styles.image} />
+                        <Image source={{ uri: normalizeUri(selectedPhoto.uri) }} style={styles.image} />
                     ) : (
                         <Text>No image available</Text>
                     )}
