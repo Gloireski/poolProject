@@ -18,9 +18,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0F4C81"
       },
-      "edgeToEdgeEnabled": true
+      "package": "com.anonymous.poolProject"
     },
     "web": {
       "bundler": "metro",

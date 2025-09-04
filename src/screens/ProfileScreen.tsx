@@ -155,7 +155,7 @@ export default function ProfileScreen() {
     if (saving) return;
     setSaving(true);
     try {
-      await api.patch('/users/me', { description });
+      await api.put('/profile/add-description', { description });
       Alert.alert('Saved', 'Your profile has been updated.');
     } catch (e: any) {
       console.log('[profile] save error:', e?.response?.data || e?.message);

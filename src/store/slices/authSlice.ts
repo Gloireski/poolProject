@@ -57,8 +57,12 @@ export const register = createAsyncThunk(
 );
 
 export const logout = createAsyncThunk('auth/logout', async () => {
-  await SecureStore.deleteItemAsync('token');
-  await SecureStore.deleteItemAsync('user');
+  try {
+    await SecureStore.deleteItemAsync('token');
+    await SecureStore.deleteItemAsync('user');
+  } catch (e) {
+    // ignore storage errors – we still want to clear in-memory state
+  }
   return { token: null, user: null };
 });
 
@@ -74,7 +78,8 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state) => { state.loading = false; })
       .addCase(register.fulfilled, (state, action) => { state.token = action.payload.token; state.user = action.payload.user; state.loading = false; })
       .addCase(register.rejected, (state) => { state.loading = false; })
-      .addCase(logout.fulfilled, (state) => { state.token = null; state.user = null; state.loading = false; });
+      .addCase(logout.fulfilled, (state) => { state.token = null; state.user = null; state.loading = false; })
+      .addCase(logout.rejected, (state) => { state.token = null; state.user = null; state.loading = false; });
   }
 });
 

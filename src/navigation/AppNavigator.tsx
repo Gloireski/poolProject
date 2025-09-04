@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MapScreen from "../screens/MapScreen";
 import CameraScreen from "../screens/CameraScreen";
 import CalendarScreen from "../screens/CalendarScreen";
-import PhotosScreen from "../screens/PhotosScreen";
-import ProfileScreen from "../screens/profileScreen";
+import PhotosScreen from "../screens/GalleryScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
