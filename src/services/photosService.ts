@@ -1,30 +1,5 @@
 import { api } from './api';
-
-export interface Photo {
-  _id: string;
-  uri: string;
-  latitude: number;
-  longitude: number;
-  capturedAt: string;
-  address?: string;
-  notes?: string;
-  userId?: string;
-  isProfilePicture?: boolean;
-}
-
-export interface PhotosResponse {
-  items: Photo[];
-  page: number;
-  limit: number;
-  total: number;
-  pages: number;
-}
-
-export interface PhotosQuery {
-  page?: number;
-  limit?: number;
-  date?: string;
-}
+import { Photo, PhotosQuery, PhotosResponse } from '../types/photosTypes';
 
 export const photosService = {
   async getPhotos(query: PhotosQuery = {}): Promise<PhotosResponse> {

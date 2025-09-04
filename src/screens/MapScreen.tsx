@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { View, Text, Pressable, Image, StyleSheet } from "react-native";
+import { View, Text, Pressable, Image, StyleSheet, Platform } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE, Region, Callout } from "react-native-maps";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
@@ -10,6 +10,8 @@ export default function MapScreen() {
     const photos = useSelector((state: RootState) => state.photos.photos || []);
     const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
     const mapRef = useRef<MapView | null>(null);
+
+    console.log("Photos from state:", photos);
 
     const photoPoints = useMemo(() => {
         return photos
@@ -77,7 +79,7 @@ export default function MapScreen() {
         <View style={{ flex: 1 }}>
             <MapView
                 ref={mapRef}
-                provider={PROVIDER_GOOGLE}
+                {...(Platform.OS === 'android' ? { provider: PROVIDER_GOOGLE } : {})}
                 style={StyleSheet.absoluteFillObject}
                 initialRegion={initialRegion}
             >
