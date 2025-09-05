@@ -21,11 +21,28 @@ import {
 } from "../store/slices/photosSlice";
 import { Photo } from "../types/photosTypes";
 import { Platform } from "react-native";
+import host from "../services/api";
+import { usePhotos } from "../hooks/usePhotos";
 
 // Build the correct base URL for images
 const getBaseUrl = () => {
-  return Platform.OS === 'android' ? 'http://10.0.2.2:3001' : 'http://127.0.0.1:3001';
+  // return Platform.OS === 'android' ? 'http://10.0.2.2:3001' : 'http://127.0.0.1:3001';
+  return `http://${host}:3001`;
 };
+const normalizePhotoUri = (photo: Photo): string => {
+  const src = photo.uri; // pour guest tu stockes déjà uri, pour serveur ton API renvoie aussi un champ (ex: /downloads/img.jpg)
+
+  if (!src) return "";
+
+  // Cas absolu (http://... ou file://)
+  if (src.startsWith("http") || src.startsWith("file:") || src.startsWith("content:")) {
+    return src;
+  }
+
+  // Sinon, chemin relatif venant du serveur (/downloads/...)
+  return `${getBaseUrl()}${src.startsWith("/") ? src : "/" + src}`;
+};
+
 
 interface DateGroup {
   date: string;
@@ -37,10 +54,22 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function GalleryScreen({ route }: any) {
   const dispatch = useAppDispatch();
-  const { photos, loading, error, hasMore, currentPage } = useSelector(
+  // const { photos, loading, error, hasMore, currentPage } = useSelector(
+  //   (state: RootState) => state.photos
+  // );
+  // Redux photos = local (guest)
+  const { photos: localPhotos, loading, error, hasMore, currentPage } = useSelector(
     (state: RootState) => state.photos
   );
+
+  // React Query photos = serveur
+  const { data: remotePhotos = [], isLoading: loadingRemote, error: errorRemote } = usePhotos();
+
   const date = route?.params?.date as string | undefined;
+  const status = useSelector((state: RootState) => state.auth.status);
+
+  // Selon status
+  const photos: Photo[] = status === "authenticated" ? remotePhotos : localPhotos;
   
   // Photo detail modal state
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
@@ -102,9 +131,10 @@ export default function GalleryScreen({ route }: any) {
 
   const renderPhoto = ({ item }: { item: Photo }) => {
     // Build full image URL from relative URI
-    const imageUrl = item.uri.startsWith('http') 
-      ? item.uri 
-      : `${getBaseUrl()}${item.uri}`;
+    const imageUrl = normalizePhotoUri(item);
+    // const imageUrl = item.uri.startsWith('http') 
+    //   ? item.uri 
+    //   : `${getBaseUrl()}${item.uri}`;
     
     return (
       <TouchableOpacity 

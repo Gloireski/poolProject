@@ -6,7 +6,10 @@ import * as Location from 'expo-location';
 import * as FileSystem from 'expo-file-system';
 import { api } from '../services/api';
 import { useAppDispatch } from '../store';
-import { refreshPhotos } from '../store/slices/photosSlice';
+import { addLocalPhoto, refreshPhotos } from '../store/slices/photosSlice';
+import type { RootState } from '../store'; 
+import { useSelector } from 'react-redux';
+import { Photo } from '../types/photosTypes';
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -16,6 +19,7 @@ export default function CameraScreen() {
   const [isReady, setIsReady] = useState(false);
   const cameraRef = useRef<CameraView | null>(null);
   const dispatch = useAppDispatch();
+  const status = useSelector((state: RootState) => state.auth.status);
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -25,6 +29,16 @@ export default function CameraScreen() {
 
   const toggleFacing = () => {
     setFacing((p) => (p === 'back' ? 'front' : 'back'));
+  };
+
+  const getCityFromCoords = async (latitude: number, longitude: number) => {
+    try {
+      const [placemark] = await Location.reverseGeocodeAsync({ latitude, longitude });
+      return placemark?.city || placemark?.district || placemark?.region || '';
+    } catch (e) {
+      console.log('Reverse geocode error:', e);
+      return '';
+    }
   };
 
   const takePhoto = async () => {
@@ -46,15 +60,22 @@ export default function CameraScreen() {
   };
 
   const uploadPhoto = async () => {
+
+    // if (status !== 'authenticated') {
+    //   Alert.alert('Upload failed', 'You must be logged in to upload photos.');
+    //   setUploading(false);
+    //   return;
+    // }
     if (!capturedUri) return;
     setUploading(true);
     try {
-      let latitude = 0, longitude = 0;
+      let latitude = 0, longitude = 0, city = '', address = '';
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === 'granted') {
           const loc = await Location.getCurrentPositionAsync({});
           latitude = loc.coords.latitude; longitude = loc.coords.longitude;
+          city = await getCityFromCoords(latitude, longitude);
         }
       } catch {}
 
@@ -63,8 +84,25 @@ export default function CameraScreen() {
       form.append('latitude', String(latitude));
       form.append('longitude', String(longitude));
       form.append('capturedAt', new Date().toISOString());
-      form.append('address', '');
-      form.append('notes', '');
+      form.append('address', address);
+      form.append('notes', city);
+
+      if (status == "guest") {
+      const photoData: Photo = {
+        _id: `guest-${Date.now()}`,
+        uri: capturedUri,
+        latitude,
+        longitude,
+        notes: city,
+        address,
+        capturedAt: new Date().toISOString(),
+      };
+
+        await dispatch(addLocalPhoto(photoData));
+        Alert.alert('Saved locally', 'Photo saved on device for guest user.');
+        setCapturedUri(null);
+        return;
+      }
 
       console.log('[camera] uploading photo...', form);
 

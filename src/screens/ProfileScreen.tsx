@@ -8,10 +8,13 @@ import * as Location from 'expo-location';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
+import host from '../services/api';
 
 // Build the correct base URL for images
 const getBaseUrl = () => {
-  return Platform.OS === 'android' ? 'http://10.0.2.2:3001' : 'http://127.0.0.1:3001';
+  // return Platform.OS === 'android' ? 'http://10.0.2.2:3001' : 'http://127.0.0.1:3001';
+  const baseUrl = `http://${host}:3001`;
+  return baseUrl;
 };
 
 // Function to get city information from coordinates using Expo Location

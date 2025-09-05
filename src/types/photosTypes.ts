@@ -1,6 +1,7 @@
 export interface Photo {
   _id: string;
-  uri: string;
+  uri?: string;          // chemin local (guest)
+  downloadUrl?: string;  // chemin serveur (authenticated)
   latitude: number;
   longitude: number;
   capturedAt: string;

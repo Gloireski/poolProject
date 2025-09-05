@@ -1,9 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
-import { Calendar, DateObject } from 'react-native-calendars';
-import { api } from '../services/api';
+import { Calendar } from 'react-native-calendars';
+import host, { api } from '../services/api';
 import { useAppDispatch } from '../store';
 import { fetchPhotos } from '../store/slices/photosSlice';
+
+const getBaseUrl = () => {
+  // return Platform.OS === 'android' ? 'http://10.0.2.2:3001' : 'http://127.0.0.1:3001';
+  return `http://${host}:3001`;
+};
 
 interface Photo {
   _id: string;
@@ -43,7 +48,7 @@ export default function CalendarScreen() {
     }
   };
 
-  const onDayPress = (day: DateObject) => {
+  const onDayPress = (day: { dateString: string }) => {
     loadForDate(day.dateString);
   };
 
@@ -59,14 +64,14 @@ export default function CalendarScreen() {
       .map(([k, ps]) => ({
         date: k,
         displayDate: new Date(k).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
-        photos: ps,
+        photos: ps as Photo[],
       }))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [photos]);
 
   const renderPhoto = ({ item }: { item: Photo }) => (
     <View style={styles.photoContainer}>
-      <Image source={{ uri: item.uri.startsWith('http') ? item.uri : `http://127.0.0.1:3001${item.uri}` }} style={styles.photoImage} />
+      <Image source={{ uri: item.uri.startsWith('http') ? item.uri : `${getBaseUrl()}${item.uri}` }} style={styles.photoImage} />
       {item.isProfilePicture ? <Text style={styles.profileBadge}>👤</Text> : null}
     </View>
   );

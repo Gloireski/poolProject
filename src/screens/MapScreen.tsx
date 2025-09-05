@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { 
-    View, Text, Pressable, Image, StyleSheet, Platform
+    View, Text, Pressable, Image, StyleSheet, Platform,
+    ActivityIndicator
 
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE, Region, Callout } from "react-native-maps";
@@ -10,29 +11,52 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Modal } from "react-native";
 import { getItemAsync } from "expo-secure-store";
 import { Photo } from "../types/photosTypes";
-import PhotoModal from "../components/PhotoModal";
+import { usePhotos } from "../hooks/usePhotos";
+import host from "../services/api";
+
 
 export default function MapScreen() {
-    const photos = useSelector((state: RootState) => state.photos.photos || []);
+    // Hook React Query toujours appelé (ne jamais conditionner les hooks)
+    const { data: remotePhotos, isLoading, error } = usePhotos();
+    const status = useSelector((state: RootState) => state.auth.status);
+    const { photos: localPhotos = [] } = useSelector((state: RootState) => state.photos) || {};
+
+
+    // Choix des photos selon le status
+
+    const photos: Photo[] = useMemo(() => {
+        if (status === "authenticated") {
+            return remotePhotos || [];
+        }
+        return localPhotos || [];
+    }, [status, remotePhotos, localPhotos]);
+
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
     const mapRef = useRef<MapView | null>(null);
-
-    console.log("photos", photos);
 
     const formatter = new Intl.DateTimeFormat("fr-FR", {
         month: "long",
         year: "numeric",
     });
 
-    const normalizeUri = (uri: string) => {
-        if (!uri) return "";
-            if (uri.startsWith("http")) return uri;
-            return `http://localhost:3001${uri}`;
+    const normalizeUri = (photo: Photo) => {
+        const src = photo.downloadUrl || photo.uri;
+        if (!src) return "";
+        // Si c’est déjà une URL complète (serveur)
+        if (src.startsWith("http")) return src;
+        // Si c’est un chemin local Expo (guest)
+        if (src.startsWith("file:") || src.startsWith("content:")) return src;
+        // ton IP locale pour Expo Go
+        const baseUrl = `http://${host}:3001`; 
+        console.log("Normalized URI:", `${baseUrl}${src.startsWith("/") ? src : "/" + src}`);
+        return `${baseUrl}${src.startsWith("/") ? src : "/" + src}`;
     };
-    const photoPoints = useMemo(() => {
-        return photos
-            .map((p: any) => {
-                const latitude = p?.latitude ?? p?.location?.latitude;
+
+
+  const photoPoints = useMemo(() => {
+      return photos
+          .map((p: any) => {
+              const latitude = p?.latitude ?? p?.location?.latitude;
                 const longitude = p?.longitude ?? p?.location?.longitude;
                 if (typeof latitude === 'number' && typeof longitude === 'number') {
                     return { ...p, latitude, longitude };
@@ -93,6 +117,8 @@ export default function MapScreen() {
 
     return (
         <View style={{ flex: 1 }}>
+            {status === "authenticated" && isLoading && <ActivityIndicator />}
+            {status === "authenticated" && error && <Text>Erreur de chargement</Text>}
             <MapView
                 ref={mapRef}
                 {...(Platform.OS === 'android' ? { provider: PROVIDER_GOOGLE } : {})}
@@ -138,7 +164,8 @@ export default function MapScreen() {
                     {/* Contenu qui bloque la propagation du clic */}
                     <Pressable style={styles.modalContent} onPress={() => {}}>
                     {selectedPhoto?.uri ? (
-                        <Image source={{ uri: normalizeUri(selectedPhoto.uri) }} style={styles.image} />
+                        <Image source={{ uri: normalizeUri(selectedPhoto) }} style={styles.image} />
+
                     ) : (
                         <Text>No image available</Text>
                     )}

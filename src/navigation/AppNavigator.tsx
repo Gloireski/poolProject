@@ -34,9 +34,13 @@ export default function AppNavigator({ token}: { token: string | null }) {
     >
       <Tab.Screen name="Camera" component={CameraScreen}/>
       <Tab.Screen name="Carte" component={MapScreen} />
-      <Tab.Screen name="Calendrier" component={CalendarScreen}/>
       <Tab.Screen name="Photos" component={PhotosScreen} />
-      {token && <Tab.Screen name="Profile" component={ProfileScreen} />}
+      {token && (
+        <>
+          <Tab.Screen name="Calendrier" component={CalendarScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+        </>
+      )}
       {/* ajouter un onglet auth si user n'est pas connecté */}
       {!token && <Tab.Screen name="Auth" component={AuthStack} options={{ title: "Connexion" }} />}
     </Tab.Navigator>

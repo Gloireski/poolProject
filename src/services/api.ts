@@ -18,6 +18,8 @@ const BASE_URL = Platform.select({
   default: `http://${host}:3001/api`,
 });
 
+console.log(`[api] baseURL=${BASE_URL}`);
+
 export const api = axios.create({ baseURL: BASE_URL });
 
 api.interceptors.request.use(async (config) => {
@@ -39,3 +41,4 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+export default host;
