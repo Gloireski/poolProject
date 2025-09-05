@@ -1,86 +1,70 @@
-# Pool Backend (Node/Express + TypeScript)
+# PoolProject (Frontend)
 
-REST API for the PoolProject mobile app. Provides auth, photos upload/processing, calendar, stats, and profile management.
+React Native app (Expo) using Redux Toolkit, NativeWind (Tailwind), navigation, camera/media/location, and SecureStore-based auth.
 
 ## Prerequisites
 - Node 18+
-- MongoDB (local or cloud)
+- Xcode (iOS) and/or Android Studio (Android)
 - Yarn or npm
 
 ## Install
 ```bash
-# from pool_backend/
+# from poolProject/
 yarn install
 # or
 npm install
 ```
 
-## Environment
-Create a `.env` file in `pool_backend/` with:
-```
-PORT=3001
-MONGODB_URI=mongodb://localhost:27017/pool
-JWT_SECRET=your_secret_here
-# Optional: LOG_HEADERS=1 to log request headers
-```
+## Environment / API base URL
+`src/services/api.ts` resolves the LAN host via Expo `Constants`. Fallback is `192.168.1.31`.
+- If requests fail, set your machine LAN IP in `resolveHost()`.
+- Base URL: `http://<LAN-IP>:3001/api`.
 
-## Build & Run
+Ensure your device/emulator can reach your laptop’s IP and that the backend has CORS enabled.
+
+## Run
 ```bash
-# Development (ts-node-dev + nodemon)
-yarn dev
-
-# Build TypeScript -> dist
-yarn build
-
-# Run built server
+# Start Metro (development)
 yarn start
+
+# Run native (requires toolchains)
+yarn ios
+
+yarn android
+
+# Web preview
+yarn web
 ```
-The server listens on `http://localhost:${PORT}` and serves API under `/api`.
-Static files (processed images) are served from `/downloads`.
 
-## Middleware & Stack
-- `helmet`, `cors`, `express.json`
-- `morgan` request logging + custom start/finish timing logs
-- Centralized error handling in `misc/errors`
+## Features
+- Redux Toolkit + React Redux
+- Axios client with `Authorization: Bearer <token>` from Expo SecureStore
+- React Navigation (stack/tabs)
+- Expo Camera, Image Picker, Media Library, Location
+- Tailwind via NativeWind
 
-## Routes
-Base path: `/api`
-- `GET /health` — health check
-- `POST /auth/register`, `POST /auth/login`, `GET /auth/me`
-- `GET /photos`, `GET /photos/:id`, `DELETE /photos/:id`
-- `POST /upload` — image upload (multer + sharp processing)
-- `GET /calendar/...` — calendar data
-- `GET /stats/...` — stats endpoints
-- `GET /profile`, `PUT /profile` — profile management
-
-Note: See `src/routes/*.ts` for details and request/response shapes.
-
-## File Uploads
-- Uses `multer` for multipart form data
-- Uses `sharp` for image processing
-- Files saved under `downloads/` and exposed via `/downloads`
-
-## Project Structure
+## Structure
 ```
 src/
-  app.ts          # Express app setup
-  index.ts        # Server bootstrap (reads env, connects DB)
-  config/db.ts    # Mongo connection
-  routes/         # Route modules (auth, photos, upload, calendar, stats, profile)
-  controllers/    # Request handlers
-  services/       # Business logic
-  models/         # Mongoose models
-  middleware/     # upload, image processing, etc
-  misc/           # errors, auth helpers, constants
-  repositories/   # Data access abstraction
+  components/   # UI primitives (Button, Card, Input, ...)
+  screens/      # Screens (Auth, Calendar, Photos, Profile, ...)
+  navigation/   # Navigator setup
+  services/     # Axios instance and domain services
+  store/        # Redux store and slices
+  theme/styles/ # Tailwind & theme helpers
+  types/utils/  # Shared types & utilities
 ```
 
-## Development Notes
-- Nodemon config in `nodemon.json` runs `ts-node-dev` on `src/index.ts`.
-- Ensure MongoDB is reachable via `MONGODB_URI`.
+## Troubleshooting
+- Can’t reach backend: verify LAN IP, firewall, and update `resolveHost()` in `src/services/api.ts`.
+- iOS device: same Wi‑Fi as computer.
+- Android emulator: `10.0.2.2` maps to host (consider hardcoding for debugging).
 
-## CORS / Mobile Access
-CORS is enabled. When running the mobile app on a device/emulator, ensure it can reach your machine’s LAN IP on `PORT`.
+## Scripts
+- `yarn start` — Expo bundler
+- `yarn ios` — Run iOS
+- `yarn android` — Run Android
+- `yarn web` — Web preview
 
 ## License
 Private student project.
