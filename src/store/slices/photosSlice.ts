@@ -154,10 +154,8 @@ const photosSlice = createSlice({
       .addCase(refreshPhotos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      })
-      .addCase(addLocalPhoto.fulfilled, (state, action: PayloadAction<Photo>) => {
-        state.photos.unshift(action.payload); // ajoute en début de liste
       });
+      
   },
 });
 

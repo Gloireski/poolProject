@@ -70,6 +70,7 @@ export default function GalleryScreen({ route }: any) {
 
   // Selon status
   const photos: Photo[] = status === "authenticated" ? remotePhotos : localPhotos;
+  console.log('photos', photos)
   
   // Photo detail modal state
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
@@ -83,11 +84,19 @@ export default function GalleryScreen({ route }: any) {
   }, [date, dispatch]);
 
   const handleLoadMore = useCallback(() => {
+    if (status === "guest") {
+      // dans ce cas, tes photos locales ne supportent pas "loadMore"
+      return;
+    }
     if (!hasMore || loading) return;
     dispatch(loadMorePhotos({ page: currentPage + 1, limit: 15, date }));
   }, [hasMore, loading, currentPage, date, dispatch]);
 
   const handleRefresh = useCallback(() => {
+    if (status === "guest") {
+      // Pour guest, pas besoin d'aller au backend
+      return;
+    }
     dispatch(refreshPhotos({ page: 1, limit: 15, date }));
   }, [date, dispatch]);
 
@@ -251,11 +260,7 @@ export default function GalleryScreen({ route }: any) {
             {selectedPhoto && (
               <>
                 <Image
-                  source={{ 
-                    uri: selectedPhoto.uri.startsWith('http') 
-                      ? selectedPhoto.uri 
-                      : `${getBaseUrl()}${selectedPhoto.uri}` 
-                  }}
+                  source={{ uri: selectedPhoto ? normalizePhotoUri(selectedPhoto) : "" }}
                   style={styles.photoDetailImage}
                   resizeMode="contain"
                 />

@@ -15,10 +15,10 @@ const initialState: AuthState = { token: null, user: null, status: "guest", load
 
 export const hydrateSession = createAsyncThunk('auth/hydrate', async () => {
   const token = await SecureStore.getItemAsync('token');
-  if (!token) return { token: null, user: null };
+  if (!token) return { token: null, user: null, status: "guest" as AuthStatus};
   const userStr = await SecureStore.getItemAsync('user');
   const user = userStr ? JSON.parse(userStr) : null;
-  return { token, user };
+  return { token, user, status: "authenticated" as AuthStatus};
 });
 
 export const login = createAsyncThunk(
@@ -51,7 +51,7 @@ export const register = createAsyncThunk(
       await SecureStore.setItemAsync('token', token);
       const me = await api.get('/profile');
       await SecureStore.setItemAsync('user', JSON.stringify(me.data));
-      return { token, user: me.data };
+      return { token, user: me.data, status: "authenticated" };
     } catch (err: any) {
       const message = err?.response?.data?.message || 'Register failed';
       return rejectWithValue(message);
@@ -75,14 +75,41 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(hydrateSession.pending, (state) => { state.loading = true; })
-      .addCase(hydrateSession.fulfilled, (state, action) => { state.token = action.payload.token; state.user = action.payload.user; state.loading = false; })
-      .addCase(login.fulfilled, (state, action) => { state.token = action.payload.token; state.user = action.payload.user;  state.status = "authenticated"; state.loading = false; })
-      .addCase(login.rejected, (state) => { state.loading = false; })
-      .addCase(register.fulfilled, (state, action) => { state.token = action.payload.token; state.user = action.payload.user; state.loading = false; })
+      .addCase(hydrateSession.pending, (state) => { 
+        state.loading = true; 
+      })
+      .addCase(hydrateSession.fulfilled, (state, action) => {
+        state.token = action.payload.token; 
+        state.user = action.payload.user; 
+        state.status = action.payload.status;
+        state.loading = false;
+      })
+      .addCase(login.fulfilled, (state, action) => { 
+        state.token = action.payload.token; 
+        state.user = action.payload.user;  
+        state.status = "authenticated"; 
+        state.loading = false; })
+      .addCase(login.rejected, (state) => { 
+        state.loading = false; 
+        state.status = "guest";
+      })
+      .addCase(register.fulfilled, (state, action) => { 
+        state.token = action.payload.token; 
+        state.user = action.payload.user; 
+        state.loading = false; })
       .addCase(register.rejected, (state) => { state.loading = false; })
-      .addCase(logout.fulfilled, (state) => { state.token = null; state.user = null; state.status = "guest"; state.loading = false; })
-      .addCase(logout.rejected, (state) => { state.token = null; state.user = null; state.loading = false; });
+      .addCase(logout.fulfilled, (state) => { 
+        state.token = null; 
+        state.user = null; 
+        state.status = "guest"; 
+        state.loading = false;
+      })
+      .addCase(logout.rejected, (state) => { 
+        state.token = null; 
+        state.user = null; 
+        state.status = "guest";
+        state.loading = false;
+      });
   }
 });
 
